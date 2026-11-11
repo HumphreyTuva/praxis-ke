@@ -85,6 +85,7 @@ export function PublicationEditor({ id }) {
 
   if (loaded.loading || !form) return loaded.error ? <ErrorBox error={loaded.error} onRetry={loaded.reload} /> : <Loading />;
 
+  const isCommentary = form.kind === "commentary";
   const set = (k) => (e) => { setForm((f) => ({ ...f, [k]: e.target ? e.target.value : e })); setErrors((x) => ({ ...x, [k]: undefined })); };
   const togglePillar = (slug) => setForm((f) => ({ ...f, pillars: f.pillars.includes(slug) ? f.pillars.filter((s) => s !== slug) : [...f.pillars, slug] }));
 
@@ -99,7 +100,8 @@ export function PublicationEditor({ id }) {
       return;
     }
     const fd = new FormData();
-    ["title", "subtitle", "kind", "status", "summary", "research_question", "purpose", "scope_note", "body", "regions", "published_on"].forEach((k) => fd.append(k, form[k] ?? ""));
+    ["title", "subtitle", "kind", "status", "summary", "research_question", "scope_note", "body", "regions", "published_on"].forEach((k) => fd.append(k, form[k] ?? ""));
+    fd.append("purpose", isCommentary ? "" : form.purpose ?? "");
     fd.append("outputs", JSON.stringify(form.outputs.filter((x) => x.trim())));
     fd.append("pillars", JSON.stringify(form.pillars));
     fd.append("featured", form.featured ? "true" : "false");
@@ -163,18 +165,28 @@ export function PublicationEditor({ id }) {
         <Switch checked={form.featured} onChange={(v) => setForm((f) => ({ ...f, featured: v }))} title="Show on the Home page" hint="Only one publication is featured at a time." />
       </Card>
 
-      <Card title="Summary" hint="A few sentences that appear on cards and at the top of the page.">
+      <Card title={isCommentary ? "HOOK" : "Summary"} hint="A few sentences that appear on cards and at the top of the page.">
         <Field htmlFor="pf-summary" error={errors.summary}><textarea id="pf-summary" rows={4} value={form.summary} onChange={set("summary")} /></Field>
       </Card>
 
-      <Card title="Research details" hint="Optional, but they make the page richer.">
-        <Field label="Research question" htmlFor="pf-rq"><textarea id="pf-rq" rows={3} value={form.research_question} onChange={set("research_question")} /></Field>
-        <Field label="Purpose" htmlFor="pf-purpose"><textarea id="pf-purpose" rows={4} value={form.purpose} onChange={set("purpose")} /></Field>
-        <Field label={form.status === "published" ? "What it includes" : "What it will include"} hint="One point per line item.">
-          <ListEditor items={form.outputs} onChange={(v) => setForm((f) => ({ ...f, outputs: v }))} placeholder="e.g. A comparison of the legal frameworks" />
-        </Field>
-        <Field label="Scope and limitations" htmlFor="pf-scope" hint="Be honest about what the research can and can’t show."><textarea id="pf-scope" rows={3} value={form.scope_note} onChange={set("scope_note")} /></Field>
-      </Card>
+      {isCommentary ? (
+        <Card title="The Argument">
+          <Field label="The Argument" htmlFor="pf-rq"><textarea id="pf-rq" rows={3} value={form.research_question} onChange={set("research_question")} /></Field>
+          <Field label="The Evidence" hint="One point per line item.">
+            <ListEditor items={form.outputs} onChange={(v) => setForm((f) => ({ ...f, outputs: v }))} placeholder="Add a piece of evidence" />
+          </Field>
+          <Field label="So What?" htmlFor="pf-scope"><textarea id="pf-scope" rows={3} value={form.scope_note} onChange={set("scope_note")} /></Field>
+        </Card>
+      ) : (
+        <Card title="Research details" hint="Optional, but they make the page richer.">
+          <Field label="Research question" htmlFor="pf-rq"><textarea id="pf-rq" rows={3} value={form.research_question} onChange={set("research_question")} /></Field>
+          <Field label="Purpose" htmlFor="pf-purpose"><textarea id="pf-purpose" rows={4} value={form.purpose} onChange={set("purpose")} /></Field>
+          <Field label={form.status === "published" ? "What it includes" : "What it will include"} hint="One point per line item.">
+            <ListEditor items={form.outputs} onChange={(v) => setForm((f) => ({ ...f, outputs: v }))} placeholder="e.g. A comparison of the legal frameworks" />
+          </Field>
+          <Field label="Scope and limitations" htmlFor="pf-scope" hint="Be honest about what the research can and can’t show."><textarea id="pf-scope" rows={3} value={form.scope_note} onChange={set("scope_note")} /></Field>
+        </Card>
+      )}
 
       <Card title="Where and what about">
         <Field label="Countries or contexts" htmlFor="pf-regions" hint="Separate with commas, e.g. Kenya, South Africa"><input id="pf-regions" value={form.regions} onChange={set("regions")} /></Field>
@@ -185,7 +197,7 @@ export function PublicationEditor({ id }) {
         </Field>
       </Card>
 
-      <Card title="Full text" hint="Optional. Leave a blank line between paragraphs. Start a line with ## to make a heading.">
+      <Card title={isCommentary ? "sources" : "Full text"} hint="Optional. Leave a blank line between paragraphs. Start a line with ## to make a heading.">
         <Field htmlFor="pf-body"><textarea id="pf-body" rows={10} value={form.body} onChange={set("body")} /></Field>
       </Card>
 
