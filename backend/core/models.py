@@ -45,6 +45,7 @@ class Publication(models.Model):
 
     title = models.CharField(max_length=200)
     subtitle = models.CharField(max_length=400, blank=True)
+    author = models.CharField(max_length=160, blank=True)
     slug = models.SlugField(unique=True, blank=True)
     kind = models.CharField(max_length=20, choices=Kind.choices, default=Kind.BRIEF)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)

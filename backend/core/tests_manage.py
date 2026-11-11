@@ -56,11 +56,13 @@ class ManageApiTests(TestCase):
         self.assertEqual(r.status_code, 400)
         r = self.post("/api/manage/publications/", {
             "title": "Budget Transparency", "status": "published", "summary": "A short summary.",
-            "outputs": ["One", "Two"], "pillars": ["comparative-and-international-policy-learning"], "featured": True,
+            "author": "Nancy Kanana", "outputs": ["One", "Two"],
+            "pillars": ["comparative-and-international-policy-learning"], "featured": True,
         })
         self.assertEqual(r.status_code, 201)
         pub = r.json()
         self.assertEqual(pub["slug"], "budget-transparency")
+        self.assertEqual(pub["author"], "Nancy Kanana")
         self.assertEqual(Publication.objects.filter(featured=True).count(), 1)  # others un-featured
         pdf = SimpleUploadedFile("brief.pdf", b"%PDF-1.4 test", content_type="application/pdf")
         r = self.client.post(f"/api/manage/publications/{pub['id']}/", {"title": "Budget Transparency", "status": "published", "summary": "S", "file": pdf})

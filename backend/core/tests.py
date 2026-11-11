@@ -33,6 +33,19 @@ class ApiTests(TestCase):
         self.assertEqual(detail.status_code, 200)
         self.assertIn("research_question", detail.json())
 
+    def test_publication_author_is_public(self):
+        publication = Publication.objects.create(
+            title="Author byline",
+            summary="A summary.",
+            author="Nancy Kanana",
+            status=Publication.Status.PUBLISHED,
+            published_on="2026-11-11",
+        )
+        response = self.client.get(f"/api/publications/{publication.slug}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["author"], "Nancy Kanana")
+        self.assertEqual(response.json()["published_on"], "2026-11-11")
+
     def test_drafts_are_hidden(self):
         Publication.objects.create(title="Hidden", summary="x", status="draft")
         slugs = [p["slug"] for p in self.client.get("/api/publications/").json()["results"]]

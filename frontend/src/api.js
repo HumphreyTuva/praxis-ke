@@ -56,3 +56,11 @@ export function formatDate(iso) {
   if (!iso) return "";
   return new Date(iso + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
+
+export function formatDateWithOrdinal(iso) {
+  if (!iso) return "";
+  const date = new Date(iso + "T00:00:00");
+  const day = date.getDate();
+  const suffix = day % 100 >= 11 && day % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" }[day % 10] || "th");
+  return `${day}${suffix} ${date.toLocaleDateString("en-GB", { month: "long", year: "numeric" })}`;
+}

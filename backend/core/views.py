@@ -33,6 +33,7 @@ def publication_json(pub, request, detail=False):
         "slug": pub.slug,
         "title": pub.title,
         "subtitle": pub.subtitle,
+        "author": pub.author,
         "kind": pub.kind,
         "kind_label": pub.get_kind_display(),
         "status": pub.status,

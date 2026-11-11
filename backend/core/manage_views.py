@@ -105,6 +105,7 @@ def publication_json(request, p, full=False):
         "kind_label": p.get_kind_display(),
         "status": p.status,
         "featured": p.featured,
+        "author": p.author,
         "published_on": p.published_on.isoformat() if p.published_on else None,
         "updated": p.updated.isoformat(),
         "cover": media_url(request, p.cover) or p.cover_url or None,
@@ -270,11 +271,14 @@ def _save_publication(request, obj=None):
     d = payload(request)
     errors = {}
     title = str(d.get("title", "")).strip()
+    author = str(d.get("author", "")).strip()
     kind = str(d.get("kind", Publication.Kind.BRIEF)).strip()
     status = str(d.get("status", Publication.Status.DRAFT)).strip()
     summary = str(d.get("summary", "")).strip()
     if not title:
         errors["title"] = "Please give the publication a title."
+    if len(author) > 160:
+        errors["author"] = "Please keep the author name under 160 characters."
     if kind not in Publication.Kind.values:
         errors["kind"] = "Please choose a type."
     if status not in Publication.Status.values:
@@ -301,6 +305,7 @@ def _save_publication(request, obj=None):
     obj = obj or Publication()
     obj.title = title
     obj.subtitle = str(d.get("subtitle", "")).strip()
+    obj.author = author
     obj.kind = kind
     obj.status = status
     obj.summary = summary

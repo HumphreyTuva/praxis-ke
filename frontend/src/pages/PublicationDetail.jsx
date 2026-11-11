@@ -1,4 +1,4 @@
-import { api, formatDate, useApi } from "../api.js";
+import { api, formatDate, formatDateWithOrdinal, useApi } from "../api.js";
 import Icon from "../components/Icons.jsx";
 import { Link } from "../router.jsx";
 import { Button, CollabBand, ErrorState, Loading, StatusBadge, useTitle } from "../components/ui.jsx";
@@ -42,6 +42,11 @@ export default function PublicationDetail({ slug }) {
             <StatusBadge status={pub.status} />
           </div>
           <h1>{pub.title}</h1>
+          {pub.author && (
+            <p className="publication-byline">
+              {[pub.author, "Praxis KE", pub.published_on && formatDateWithOrdinal(pub.published_on)].filter(Boolean).join(" | ")}
+            </p>
+          )}
           {pub.subtitle && <p className="lead">{pub.subtitle}</p>}
         </div>
       </header>

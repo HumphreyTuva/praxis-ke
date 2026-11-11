@@ -54,7 +54,7 @@ export function Publications() {
 }
 
 const BLANK = {
-  title: "", subtitle: "", kind: "brief", status: "draft", summary: "", research_question: "", purpose: "", outputs: [],
+  title: "", subtitle: "", author: "", kind: "brief", status: "draft", summary: "", research_question: "", purpose: "", outputs: [],
   scope_note: "", body: "", regions: "", pillars: [], featured: false, published_on: "",
 };
 
@@ -100,7 +100,7 @@ export function PublicationEditor({ id }) {
       return;
     }
     const fd = new FormData();
-    ["title", "subtitle", "kind", "status", "summary", "research_question", "scope_note", "body", "regions", "published_on"].forEach((k) => fd.append(k, form[k] ?? ""));
+    ["title", "subtitle", "author", "kind", "status", "summary", "research_question", "scope_note", "body", "regions", "published_on"].forEach((k) => fd.append(k, form[k] ?? ""));
     fd.append("purpose", isCommentary ? "" : form.purpose ?? "");
     fd.append("outputs", JSON.stringify(form.outputs.filter((x) => x.trim())));
     fd.append("pillars", JSON.stringify(form.pillars));
@@ -144,6 +144,7 @@ export function PublicationEditor({ id }) {
       <Card title="The basics">
         <Field label="Title" htmlFor="pf-title" error={errors.title}><input id="pf-title" value={form.title} onChange={set("title")} placeholder="e.g. From Transparency to Accountability" /></Field>
         <Field label="Subtitle (optional)" htmlFor="pf-subtitle" hint="A longer line shown under the title."><textarea id="pf-subtitle" rows={2} value={form.subtitle} onChange={set("subtitle")} /></Field>
+        <Field label="Author / commentator (optional)" htmlFor="pf-author" hint="Shown with Praxis KE and the publication date."><input id="pf-author" maxLength={160} value={form.author} onChange={set("author")} placeholder="e.g. Nancy Kanana" /></Field>
         <Field label="What kind is it?">
           <div className="adm-chips adm-chips--wrap">{KINDS.map(([k, l]) => <Chip key={k} on={form.kind === k} onClick={() => setForm((f) => ({ ...f, kind: k }))}>{l}</Chip>)}</div>
         </Field>

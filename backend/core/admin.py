@@ -18,7 +18,7 @@ class PublicationAdmin(admin.ModelAdmin):
     filter_horizontal = ("pillars",)
     prepopulated_fields = {"slug": ("title",)}
     fieldsets = (
-        (None, {"fields": ("title", "subtitle", "slug", "kind", "status", "featured", "published_on")}),
+        (None, {"fields": ("title", "subtitle", "author", "slug", "kind", "status", "featured", "published_on")}),
         ("Summary", {"fields": ("summary", "regions", "pillars")}),
         ("Research framing", {"fields": ("research_question", "purpose", "outputs", "scope_note")}),
         ("Cover, full text & download", {"fields": ("cover", "cover_url", "body", "file")}),

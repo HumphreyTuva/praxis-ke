@@ -248,6 +248,7 @@ main:focus { outline: none; }
 
 /* ---------- Page headers: see .hero--page ---------- */
 .pub-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.publication-byline { margin: 12px 0 0; color: var(--ivory); font-size: 0.9rem; font-weight: 500; }
 
 /* ---------- About ---------- */
 .split { display: grid; gap: 40px; align-items: start; }
