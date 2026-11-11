@@ -54,7 +54,7 @@ export function Publications() {
 }
 
 const BLANK = {
-  title: "", subtitle: "", author: "", kind: "brief", status: "draft", summary: "", research_question: "", purpose: "", outputs: [],
+  title: "", subtitle: "", author: "", cover_credit: "", kind: "brief", status: "draft", summary: "", research_question: "", purpose: "", outputs: [],
   so_whats: [], scope_note: "", body: "", regions: "", pillars: [], featured: false, published_on: "",
 };
 
@@ -100,7 +100,7 @@ export function PublicationEditor({ id }) {
       return;
     }
     const fd = new FormData();
-    ["title", "subtitle", "author", "kind", "status", "summary", "research_question", "scope_note", "body", "regions", "published_on"].forEach((k) => fd.append(k, form[k] ?? ""));
+    ["title", "subtitle", "author", "cover_credit", "kind", "status", "summary", "research_question", "scope_note", "body", "regions", "published_on"].forEach((k) => fd.append(k, form[k] ?? ""));
     fd.append("purpose", isCommentary ? "" : form.purpose ?? "");
     fd.append("outputs", JSON.stringify(form.outputs.filter((x) => x.trim())));
     fd.append("so_whats", JSON.stringify(form.so_whats.filter((x) => x.trim())));
@@ -209,6 +209,9 @@ export function PublicationEditor({ id }) {
         <Field label="Cover image" hint="Portrait works best (3:4). JPG, PNG or WebP, up to 6 MB. Without one, a branded cover is made for you." error={errors.cover}>
           <FilePicker kind="image" label="No cover yet" value={coverValue} file={cover.file}
             onPick={(f) => setCover({ file: f, clear: false })} onClear={() => setCover({ file: null, clear: true })} />
+        </Field>
+        <Field label="Image credit / source (optional)" htmlFor="pf-cover-credit" hint="Credit the photographer or publisher, and add a source URL if useful. Example: Photo: Jane Doe / Reuters (https://…)" error={errors.cover_credit}>
+          <input id="pf-cover-credit" maxLength={300} value={form.cover_credit || ""} onChange={set("cover_credit")} placeholder="Photographer or source, with link" />
         </Field>
         <Field label="PDF to download" hint="People can download this from the publication page once it’s published. Up to 25 MB." error={errors.file}>
           <FilePicker kind="pdf" label="No PDF yet" value={pdfValue} file={pdf.file}

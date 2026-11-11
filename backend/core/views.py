@@ -44,12 +44,15 @@ def publication_json(pub, request, detail=False):
         "pillars": [_pillar_brief(p) for p in pub.pillars.all()],
         "download_url": request.build_absolute_uri(pub.file.url) if downloadable else None,
         "cover": request.build_absolute_uri(pub.cover.url) if pub.cover else (pub.cover_url or None),
+        "cover_credit": pub.cover_credit,
+        "has_file": bool(pub.file),
     }
     if detail:
         data.update(
             research_question=pub.research_question,
             purpose=pub.purpose,
             outputs=pub.outputs or [],
+            so_whats=pub.so_whats or [],
             scope_note=pub.scope_note,
             body=pub.body,
         )

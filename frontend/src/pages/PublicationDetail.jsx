@@ -54,6 +54,12 @@ export default function PublicationDetail({ slug }) {
       <section className="section">
         <div className="container detail">
           <article className="detail__main">
+            {pub.cover && (
+              <figure className="publication-cover">
+                <img src={pub.cover} alt={`Cover image for ${pub.title}`} />
+                {pub.cover_credit && <figcaption>Image credit: {pub.cover_credit}</figcaption>}
+              </figure>
+            )}
             {dev && (
               <p className="callout callout--dev">
                 <Icon name="clock" size={22} />
@@ -84,9 +90,18 @@ export default function PublicationDetail({ slug }) {
               </>
             )}
 
+            {pub.so_whats?.length > 0 && (
+              <>
+                <h2>So What?</h2>
+                <ul className="ticks">
+                  {pub.so_whats.map((point, i) => (<li key={i}><Icon name="check" size={18} /><span>{point}</span></li>))}
+                </ul>
+              </>
+            )}
+
             {pub.body && <Body text={pub.body} />}
 
-            {pub.scope_note && (
+            {pub.scope_note && pub.kind !== "commentary" && (
               <>
                 <h2>Scope and limitations</h2>
                 <p>{pub.scope_note}</p>
@@ -129,9 +144,9 @@ export default function PublicationDetail({ slug }) {
               </dl>
               {pub.download_url ? (
                 <Button href={pub.download_url} icon="download" download>Download PDF</Button>
-              ) : (
+              ) : pub.has_file ? (
                 <p className="muted small">A PDF will be available for download when this publication is released.</p>
-              )}
+              ) : null}
             </div>
             <div className="glance glance--soft">
               <h2>Questions or feedback?</h2>

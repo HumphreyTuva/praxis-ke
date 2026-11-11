@@ -55,6 +55,9 @@ class Publication(models.Model):
     outputs = models.JSONField(
         default=list, blank=True, help_text="JSON list of strings: what this publication will deliver."
     )
+    so_whats = models.JSONField(
+        default=list, blank=True, help_text="JSON list of strings: why the argument matters."
+    )
     scope_note = models.TextField(blank=True, help_text="Honest note on scope / limitations.")
     body = models.TextField(
         blank=True,
@@ -63,6 +66,7 @@ class Publication(models.Model):
     regions = models.CharField(max_length=200, blank=True, help_text="Comma-separated, e.g. Kenya, South Africa")
     pillars = models.ManyToManyField(Pillar, blank=True, related_name="publications")
     cover = models.FileField(upload_to="covers/", blank=True, help_text="Cover image (portrait, 3:4). Optional: a branded cover is generated if empty.")
+    cover_credit = models.CharField(max_length=300, blank=True, help_text="Photographer, publisher, or source credit for the cover image.")
     cover_url = models.CharField(max_length=300, blank=True, help_text="Alternative to uploading: a path or URL, e.g. /brand/cover-transparency.webp")
     file = models.FileField(upload_to="publications/", blank=True, help_text="PDF for download (published items only).")
     published_on = models.DateField(null=True, blank=True)

@@ -109,6 +109,7 @@ def publication_json(request, p, full=False):
         "published_on": p.published_on.isoformat() if p.published_on else None,
         "updated": p.updated.isoformat(),
         "cover": media_url(request, p.cover) or p.cover_url or None,
+        "cover_credit": p.cover_credit,
         "has_file": bool(p.file),
     }
     if full:
@@ -118,6 +119,7 @@ def publication_json(request, p, full=False):
             research_question=p.research_question,
             purpose=p.purpose,
             outputs=p.outputs or [],
+            so_whats=p.so_whats or [],
             scope_note=p.scope_note,
             body=p.body,
             regions=p.regions,
@@ -272,6 +274,7 @@ def _save_publication(request, obj=None):
     errors = {}
     title = str(d.get("title", "")).strip()
     author = str(d.get("author", "")).strip()
+    cover_credit = str(d.get("cover_credit", "")).strip()
     kind = str(d.get("kind", Publication.Kind.BRIEF)).strip()
     status = str(d.get("status", Publication.Status.DRAFT)).strip()
     summary = str(d.get("summary", "")).strip()
@@ -279,6 +282,8 @@ def _save_publication(request, obj=None):
         errors["title"] = "Please give the publication a title."
     if len(author) > 160:
         errors["author"] = "Please keep the author name under 160 characters."
+    if len(cover_credit) > 300:
+        errors["cover_credit"] = "Please keep the image credit under 300 characters."
     if kind not in Publication.Kind.values:
         errors["kind"] = "Please choose a type."
     if status not in Publication.Status.values:
@@ -306,12 +311,14 @@ def _save_publication(request, obj=None):
     obj.title = title
     obj.subtitle = str(d.get("subtitle", "")).strip()
     obj.author = author
+    obj.cover_credit = cover_credit
     obj.kind = kind
     obj.status = status
     obj.summary = summary
     obj.research_question = str(d.get("research_question", "")).strip()
     obj.purpose = str(d.get("purpose", "")).strip()
     obj.outputs = as_list(d.get("outputs"))
+    obj.so_whats = as_list(d.get("so_whats"))
     obj.scope_note = str(d.get("scope_note", "")).strip()
     obj.body = str(d.get("body", "")).strip()
     obj.regions = str(d.get("regions", "")).strip()
