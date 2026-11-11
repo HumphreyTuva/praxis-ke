@@ -55,7 +55,7 @@ export function Publications() {
 
 const BLANK = {
   title: "", subtitle: "", author: "", kind: "brief", status: "draft", summary: "", research_question: "", purpose: "", outputs: [],
-  scope_note: "", body: "", regions: "", pillars: [], featured: false, published_on: "",
+  so_whats: [], scope_note: "", body: "", regions: "", pillars: [], featured: false, published_on: "",
 };
 
 export function PublicationEditor({ id }) {
@@ -73,7 +73,7 @@ export function PublicationEditor({ id }) {
 
   useEffect(() => {
     if (loaded.loading || loaded.error) return;
-    const base = loaded.data ? { ...BLANK, ...loaded.data, published_on: loaded.data.published_on || "" } : BLANK;
+    const base = loaded.data ? { ...BLANK, ...loaded.data, so_whats: loaded.data.so_whats || [], published_on: loaded.data.published_on || "" } : BLANK;
     setForm(base);
     setInitial(JSON.stringify(base));
     setCover({ file: null, clear: false });
@@ -103,6 +103,7 @@ export function PublicationEditor({ id }) {
     ["title", "subtitle", "author", "kind", "status", "summary", "research_question", "scope_note", "body", "regions", "published_on"].forEach((k) => fd.append(k, form[k] ?? ""));
     fd.append("purpose", isCommentary ? "" : form.purpose ?? "");
     fd.append("outputs", JSON.stringify(form.outputs.filter((x) => x.trim())));
+    fd.append("so_whats", JSON.stringify(form.so_whats.filter((x) => x.trim())));
     fd.append("pillars", JSON.stringify(form.pillars));
     fd.append("featured", form.featured ? "true" : "false");
     if (cover.file) fd.append("cover", cover.file);
@@ -176,7 +177,9 @@ export function PublicationEditor({ id }) {
           <Field label="The Evidence" hint="One point per line item.">
             <ListEditor items={form.outputs} onChange={(v) => setForm((f) => ({ ...f, outputs: v }))} placeholder="Add a piece of evidence" />
           </Field>
-          <Field label="So What?" htmlFor="pf-scope"><textarea id="pf-scope" rows={3} value={form.scope_note} onChange={set("scope_note")} /></Field>
+          <Field label="So What?" hint="Add as many points as needed, one per item.">
+            <ListEditor items={form.so_whats} onChange={(v) => setForm((f) => ({ ...f, so_whats: v }))} placeholder="Add a point on why this matters" />
+          </Field>
         </Card>
       ) : (
         <Card title="Research details" hint="Optional, but they make the page richer.">
